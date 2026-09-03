@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_description">OpenTapper は選択した位置を自動でタップします。データは収集しません。</string>
+    <string name="app_name">OpenTapper</string>
+    <string name="btn_profiles">📋</string>
+    <string name="btn_record">◎</string>
+    <string name="btn_settings">⚙</string>
+    <string name="feature_delays">遅延設定</string>
+    <string name="feature_direct_input">直接入力</string>
+    <string name="feature_export">エクスポート</string>
+    <string name="feature_gestures">ジェスチャモード</string>
+    <string name="feature_marker_numbers">マーカー番号表示</string>
+    <string name="feature_per_point_interval">ポイント別間隔</string>
+    <string name="feature_profiles">プロファイル</string>
+    <string name="feature_randomize">ランダマイズ</string>
+    <string name="feature_recording">記録モード</string>
+    <string name="feature_round_robin">順番モード</string>
+    <string name="feature_tap_limit">タップ制限</string>
+    <string name="feature_tap_size">タップサイズ</string>
+    <string name="feature_visual_feedback">ビジュアルフィードバック</string>
+</resources>
