@@ -10,7 +10,7 @@ android {
         applicationId = "com.opentapper.tap"
         minSdk = 24
         targetSdk = 34
-        versionCode = 19
+        versionCode = 100
         versionName = "1.00"
     }
 
