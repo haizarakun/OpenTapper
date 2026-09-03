@@ -119,6 +119,14 @@ public class OverlayUI {
     };
 
     private void buildPanel() {
+        switch (s.cfg.overlayStyle) {
+            case 1: buildCompactPanel(); return;
+            case 2: buildMinimalPanel(); return;
+            default: buildFullPanel(); return;
+        }
+    }
+
+    private void buildFullPanel() {
         panel = new LinearLayout(s);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setBackground(roundRect(C_BG, 14));
@@ -177,6 +185,77 @@ public class OverlayUI {
         row2.setOnTouchListener(new Dragger(panel, panelLp, saved));
     }
 
+    /** コンパクト表示：1段のみの省スペース版 */
+    private void buildCompactPanel() {
+        panel = new LinearLayout(s);
+        panel.setOrientation(LinearLayout.HORIZONTAL);
+        panel.setGravity(Gravity.CENTER_VERTICAL);
+        panel.setBackground(roundRect(C_BG, 14));
+        panel.setPadding(dp(5), dp(5), dp(5), dp(5));
+        panel.setElevation(dp(8));
+
+        TextView handle = label("⋮⋮", C_SUB, 15);
+        handle.setGravity(Gravity.CENTER);
+        handle.setPadding(dp(6), dp(6), dp(6), dp(6));
+        handle.setBackground(roundRect(0x1AFFFFFF, 8));
+        panel.addView(handle);
+
+        btnToggle = btn("▶", C_RUN, new View.OnClickListener() { public void onClick(View v) { haptic(v); s.toggle(); } });
+        panel.addView(btnToggle);
+
+        lblInterval = label("100", C_TEXT, 13);
+        lblInterval.setTypeface(Typeface.DEFAULT_BOLD);
+        lblInterval.setMinWidth(dp(38));
+        lblInterval.setGravity(Gravity.CENTER);
+        lblInterval.setOnClickListener(new View.OnClickListener() { public void onClick(View v) { haptic(v); cyclePreset(); } });
+        panel.addView(lblInterval);
+
+        panel.addView(btn("●+", C_BTN, new View.OnClickListener() { public void onClick(View v) { haptic(v); addMarkerNearLast(); } }));
+        panel.addView(btn("●−", C_BTN, new View.OnClickListener() { public void onClick(View v) { haptic(v); removeLastMarker(); } }));
+        panel.addView(btn("⚙", C_BTN, new View.OnClickListener() { public void onClick(View v) { haptic(v); toggleSheet(); } }));
+        panel.addView(btn("×", C_STOP, new View.OnClickListener() { public void onClick(View v) { haptic(v); hide(); } }));
+
+        panelLp = newLp(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        panelLp.x = s.cfg.panelX;
+        panelLp.y = s.cfg.panelY;
+        Runnable saved = new Runnable() {
+            public void run() { s.cfg.panelX = panelLp.x; s.cfg.panelY = panelLp.y; }
+        };
+        handle.setOnTouchListener(new Dragger(panel, panelLp, saved) {
+            @Override void onTap() { haptic(panel); minimize(); }
+        });
+        panel.setOnTouchListener(new Dragger(panel, panelLp, saved));
+    }
+
+    /** ミニマル表示：円形の開始/停止ボタン1つのみ（タップ=開始/停止、長押し=設定） */
+    private void buildMinimalPanel() {
+        panel = new LinearLayout(s);
+        panel.setOrientation(LinearLayout.VERTICAL);
+
+        TextView t = label(s.running ? "■" : "▶", Color.WHITE, 18);
+        t.setTypeface(Typeface.DEFAULT_BOLD);
+        t.setGravity(Gravity.CENTER);
+        t.setBackground(circle(s.running ? C_STOP : C_RUN, Color.WHITE, dp(2)));
+        t.setElevation(dp(8));
+        t.setLayoutParams(new LinearLayout.LayoutParams(dp(52), dp(52)));
+        btnToggle = t;
+        lblInterval = null;
+        panel.addView(t);
+
+        panelLp = newLp(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        panelLp.x = s.cfg.panelX;
+        panelLp.y = s.cfg.panelY;
+        Runnable saved = new Runnable() {
+            public void run() { s.cfg.panelX = panelLp.x; s.cfg.panelY = panelLp.y; }
+        };
+        Dragger d = new Dragger(panel, panelLp, saved) {
+            @Override void onTap() { haptic(panel); s.toggle(); }
+            @Override void onLongPress() { haptic(panel); toggleSheet(); }
+        };
+        panel.setOnTouchListener(d);
+        t.setOnTouchListener(d);
+    }
+
     private void haptic(View v) {
         try { v.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP); } catch (Throwable t) { }
     }
@@ -212,7 +291,9 @@ public class OverlayUI {
     void onRunningChanged() {
         if (btnToggle == null) return;
         btnToggle.setText(s.running ? "■" : "▶");
-        btnToggle.setBackground(roundRect(s.running ? C_STOP : C_RUN, 8));
+        btnToggle.setBackground(s.cfg.overlayStyle == 2
+                ? circle(s.running ? C_STOP : C_RUN, Color.WHITE, dp(2))
+                : roundRect(s.running ? C_STOP : C_RUN, 8));
         if (panel != null) panel.setAlpha(s.running ? 0.9f : 1f);
         if (bubble != null) bubble.setBackground(circle(s.running ? C_STOP : C_ACCENT, Color.WHITE, dp(2)));
         if (lblLive != null) {
@@ -399,6 +480,23 @@ public class OverlayUI {
         }
         col.addView(prow);
 
+        // 表示スタイル
+        col.addView(section(L.s("sec_overlay")));
+        LinearLayout srow = new LinearLayout(s);
+        srow.setOrientation(LinearLayout.HORIZONTAL);
+        final String[] styleKeys = {"style_full", "style_compact", "style_minimal"};
+        for (int i = 0; i < styleKeys.length; i++) {
+            final int style = i;
+            TextView b = btn(L.s(styleKeys[i]), c.overlayStyle == i ? C_ACCENT : C_BTN, new View.OnClickListener() {
+                public void onClick(View v) { haptic(v); switchOverlayStyle(style); }
+            });
+            srow.addView(b);
+        }
+        col.addView(srow);
+        col.addView(btn(L.s("hide_overlay"), C_BTN, new View.OnClickListener() {
+            public void onClick(View v) { haptic(v); closeSheet(); hide(); }
+        }));
+
         col.addView(section(L.s("sec_tap")));
         col.addView(seek(L.s("interval_fine"), c.intervalMs, 10, 300, L.s("u_ms"), new IntSetter() { public void set(int v) { c.intervalMs = v; refreshInterval(); } }));
         col.addView(seek(L.s("hold"), c.holdMs, 1, 300, L.s("u_ms"), new IntSetter() { public void set(int v) { c.holdMs = v; } }));
@@ -467,6 +565,22 @@ public class OverlayUI {
         FrameLayout wrap = new FrameLayout(s);
         wrap.addView(sv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Math.min(dp(520), (int) (screenH * 0.8f))));
         return wrap;
+    }
+
+    private void switchOverlayStyle(int style) {
+        if (s.cfg.overlayStyle == style) { closeSheet(); return; }
+        syncPointsToConfig();
+        s.cfg.overlayStyle = style;
+        s.cfg.minimized = false;
+        s.cfg.save();
+        closeSheet();
+        if (bubble != null && bubble.getParent() != null) safeRemove(bubble);
+        bubble = null;
+        if (panel != null && panel.getParent() != null) safeRemove(panel);
+        buildPanel();
+        wm.addView(panel, panelLp);
+        refreshInterval();
+        onRunningChanged();
     }
 
     private void reloadMarkers() {

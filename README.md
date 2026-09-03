@@ -1,5 +1,7 @@
 # OpenTapper
 
+**v1.00**
+
 OpenTapper is a free, open-source auto-tapper (連打ツール) for Android. It uses the
 Accessibility API to tap one or more points on screen automatically — no root
 required.
@@ -14,10 +16,19 @@ required.
 - Auto-pause when you leave the target app
 - Keep-screen-awake while running
 - Volume-down key to start/stop
+- Force-stop button right in the persistent notification
+- Three overlay display styles — Full, Compact, and Minimal — switchable
+  from the settings sheet
 - Home-screen widget for one-tap launch
 - Export/import settings as text via the clipboard
 - 17 languages, auto-detected from the device locale
 - No network access, no analytics, no ads
+
+## Support development
+
+OpenTapper is free and ad-free. If it's useful to you, consider buying the
+developer a coffee: **https://buymeacoffee.com/akunJP** (also linked at the
+bottom of the app's home screen).
 
 ## How it works
 

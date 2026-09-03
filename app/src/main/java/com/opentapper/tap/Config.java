@@ -29,6 +29,8 @@ public class Config {
     // パネル位置
     public int panelX = 0, panelY = 30;
     public boolean minimized = false;
+    // オーバーレイの表示スタイル: 0=フル 1=コンパクト 2=ミニマル
+    public int overlayStyle = 0;
 
     private final SharedPreferences prefs;
     private int profile;
@@ -57,6 +59,7 @@ public class Config {
         keepAwake = prefs.getBoolean("keepAwake", true);
         panelX = prefs.getInt("panelX", 0);
         panelY = prefs.getInt("panelY", 30);
+        overlayStyle = prefs.getInt("overlayStyle", 0);
         points.clear();
         int n = prefs.getInt(k("n"), 0);
         for (int i = 0; i < n; i++) {
@@ -81,6 +84,7 @@ public class Config {
         e.putBoolean("keepAwake", keepAwake);
         e.putInt("panelX", panelX);
         e.putInt("panelY", panelY);
+        e.putInt("overlayStyle", overlayStyle);
         e.putInt(k("n"), points.size());
         for (int i = 0; i < points.size(); i++) {
             e.putInt(k("x" + i), points.get(i)[0]);

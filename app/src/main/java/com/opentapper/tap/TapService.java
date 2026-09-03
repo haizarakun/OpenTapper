@@ -5,7 +5,11 @@ import android.accessibilityservice.GestureDescription;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Path;
 import android.os.Build;
 import android.os.Handler;
@@ -37,6 +41,11 @@ public class TapService extends AccessibilityService {
     private NotificationManager nm;
     private static final int NOTIF_ID = 1337;
     private static final String CHANNEL = "opentapper_status";
+    private static final String ACTION_FORCE_STOP = "com.opentapper.tap.ACTION_FORCE_STOP";
+    private final BroadcastReceiver forceStopReceiver = new BroadcastReceiver() {
+        @Override public void onReceive(Context ctx, Intent intent) { stopTapping(); }
+    };
+    private boolean forceStopReceiverRegistered = false;
 
     public static void requestShowOverlay(Context c) {
         TapService s = sInstance;
@@ -75,6 +84,12 @@ public class TapService extends AccessibilityService {
                 nm.createNotificationChannel(ch);
             }
         } catch (Throwable t) { nm = null; }
+        try {
+            IntentFilter f = new IntentFilter(ACTION_FORCE_STOP);
+            if (Build.VERSION.SDK_INT >= 33) registerReceiver(forceStopReceiver, f, 4 /* Context.RECEIVER_NOT_EXPORTED */);
+            else registerReceiver(forceStopReceiver, f);
+            forceStopReceiverRegistered = true;
+        } catch (Throwable t) { }
         ui = new OverlayUI(this);
         widgetRefresh();
     }
@@ -112,6 +127,7 @@ public class TapService extends AccessibilityService {
         stopTapping();
         if (ui != null) ui.hide();
         sInstance = null;
+        unregisterForceStopReceiver();
         TapWidget.refresh(this);
         return super.onUnbind(intent);
     }
@@ -121,7 +137,14 @@ public class TapService extends AccessibilityService {
         stopTapping();
         if (ui != null) ui.hide();
         sInstance = null;
+        unregisterForceStopReceiver();
         super.onDestroy();
+    }
+
+    private void unregisterForceStopReceiver() {
+        if (!forceStopReceiverRegistered) return;
+        try { unregisterReceiver(forceStopReceiver); } catch (Throwable t) { }
+        forceStopReceiverRegistered = false;
     }
 
     // ---------------- 実行制御 ----------------
@@ -246,9 +269,12 @@ public class TapService extends AccessibilityService {
         try {
             Notification.Builder nb = Build.VERSION.SDK_INT >= 26
                     ? new Notification.Builder(this, CHANNEL) : new Notification.Builder(this);
+            int piFlags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
+            PendingIntent stopPi = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_FORCE_STOP), piFlags);
             nb.setContentTitle(L.s("notif_title"))
               .setContentText(L.f("notif_text", cfg.intervalMs, ui.markerCount()))
               .setSmallIcon(android.R.drawable.ic_media_play)
+              .addAction(android.R.drawable.ic_media_pause, L.s("notif_stop"), stopPi)
               .setOngoing(true);
             nm.notify(NOTIF_ID, nb.build());
         } catch (Throwable t) { }

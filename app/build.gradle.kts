@@ -10,8 +10,8 @@ android {
         applicationId = "com.opentapper.tap"
         minSdk = 24
         targetSdk = 34
-        versionCode = 18
-        versionName = "18"
+        versionCode = 19
+        versionName = "1.00"
     }
 
     // If a keystore is provided through environment variables (e.g. in CI), the

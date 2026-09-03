@@ -167,6 +167,18 @@ public class MainActivity extends Activity {
         foot.setPadding(0, dp(22), 0, 0);
         col.addView(foot, match());
 
+        TextView donate = text(L.s("donate"), 13, CYAN);
+        donate.setTypeface(Typeface.DEFAULT_BOLD);
+        donate.setGravity(Gravity.CENTER);
+        donate.setPadding(dp(16), dp(10), dp(16), 0);
+        donate.setClickable(true);
+        donate.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try { startActivity(new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://buymeacoffee.com/akunJP"))); } catch (Throwable t) { }
+            }
+        });
+        col.addView(donate, match());
+
         ScrollView sv = new ScrollView(this);
         sv.setFillViewport(true);
         sv.addView(col, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

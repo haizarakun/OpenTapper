@@ -48,12 +48,12 @@ public class L {
     }
 
     private static void put(String code, String table) {
-        Map<String, String> m = new HashMap<String, String>();
+        Map<String, String> m = T.get(code);
+        if (m == null) { m = new HashMap<String, String>(); T.put(code, m); }
         for (String line : table.split("\n")) {
             int i = line.indexOf('=');
             if (i > 0) m.put(line.substring(0, i).trim(), line.substring(i + 1).trim());
         }
-        T.put(code, m);
     }
 
     static {
@@ -495,5 +495,23 @@ public class L {
         "stats_fmt=الإجمالي %d / الجلسة %d / %.1f نقرة/ث\nreset_total=إعادة تعيين الإجمالي\n" +
         "u_ms=ms\nu_times=مرة\nu_sec=ث\n" +
         "w_launch=فتح\nw_start=بدء\nw_stop=إيقاف\nnotif_title=OpenTapper يعمل\nnotif_text=الفاصل %dms / %d نقاط\nchannel=حالة OpenTapper\n");
+
+        put("ja", "notif_stop=強制停止\ndonate=☕ 開発を支援する\nsec_overlay=表示スタイル\nstyle_full=フル\nstyle_compact=コンパクト\nstyle_minimal=ミニマル\nhide_overlay=オーバーレイを閉じる\n");
+        put("en", "notif_stop=Force Stop\ndonate=☕ Support development\nsec_overlay=Overlay style\nstyle_full=Full\nstyle_compact=Compact\nstyle_minimal=Minimal\nhide_overlay=Close overlay\n");
+        put("zh", "notif_stop=强制停止\ndonate=☕ 支持开发\nsec_overlay=显示样式\nstyle_full=完整\nstyle_compact=紧凑\nstyle_minimal=极简\nhide_overlay=关闭悬浮窗\n");
+        put("zh-TW", "notif_stop=強制停止\ndonate=☕ 支持開發\nsec_overlay=顯示樣式\nstyle_full=完整\nstyle_compact=精簡\nstyle_minimal=極簡\nhide_overlay=關閉懸浮視窗\n");
+        put("ko", "notif_stop=강제 종료\ndonate=☕ 개발 후원하기\nsec_overlay=표시 스타일\nstyle_full=전체\nstyle_compact=간단히\nstyle_minimal=미니멀\nhide_overlay=오버레이 닫기\n");
+        put("es", "notif_stop=Forzar detención\ndonate=☕ Apoyar el desarrollo\nsec_overlay=Estilo del panel\nstyle_full=Completo\nstyle_compact=Compacto\nstyle_minimal=Mínimo\nhide_overlay=Cerrar panel\n");
+        put("fr", "notif_stop=Arrêt forcé\ndonate=☕ Soutenir le développement\nsec_overlay=Style du panneau\nstyle_full=Complet\nstyle_compact=Compact\nstyle_minimal=Minimal\nhide_overlay=Fermer le panneau\n");
+        put("de", "notif_stop=Erzwingen stoppen\ndonate=☕ Entwicklung unterstützen\nsec_overlay=Panel-Stil\nstyle_full=Voll\nstyle_compact=Kompakt\nstyle_minimal=Minimal\nhide_overlay=Panel schließen\n");
+        put("pt", "notif_stop=Forçar parada\ndonate=☕ Apoiar o desenvolvimento\nsec_overlay=Estilo do painel\nstyle_full=Completo\nstyle_compact=Compacto\nstyle_minimal=Mínimo\nhide_overlay=Fechar painel\n");
+        put("ru", "notif_stop=Принудительно остановить\ndonate=☕ Поддержать разработку\nsec_overlay=Стиль панели\nstyle_full=Полный\nstyle_compact=Компактный\nstyle_minimal=Минимальный\nhide_overlay=Закрыть панель\n");
+        put("it", "notif_stop=Arresto forzato\ndonate=☕ Sostieni lo sviluppo\nsec_overlay=Stile pannello\nstyle_full=Completo\nstyle_compact=Compatto\nstyle_minimal=Minimo\nhide_overlay=Chiudi pannello\n");
+        put("hi", "notif_stop=ज़बरदस्ती रोकें\ndonate=☕ विकास का समर्थन करें\nsec_overlay=पैनल शैली\nstyle_full=पूर्ण\nstyle_compact=संक्षिप्त\nstyle_minimal=न्यूनतम\nhide_overlay=पैनल बंद करें\n");
+        put("id", "notif_stop=Hentikan paksa\ndonate=☕ Dukung pengembangan\nsec_overlay=Gaya panel\nstyle_full=Penuh\nstyle_compact=Ringkas\nstyle_minimal=Minimal\nhide_overlay=Tutup panel\n");
+        put("vi", "notif_stop=Buộc dừng\ndonate=☕ Ủng hộ phát triển\nsec_overlay=Kiểu bảng điều khiển\nstyle_full=Đầy đủ\nstyle_compact=Gọn\nstyle_minimal=Tối giản\nhide_overlay=Đóng bảng điều khiển\n");
+        put("th", "notif_stop=บังคับหยุด\ndonate=☕ สนับสนุนการพัฒนา\nsec_overlay=รูปแบบแผงควบคุม\nstyle_full=เต็มรูปแบบ\nstyle_compact=กะทัดรัด\nstyle_minimal=ขั้นต่ำ\nhide_overlay=ปิดแผงควบคุม\n");
+        put("tr", "notif_stop=Zorla durdur\ndonate=☕ Geliştirmeyi destekle\nsec_overlay=Panel stili\nstyle_full=Tam\nstyle_compact=Kompakt\nstyle_minimal=Minimal\nhide_overlay=Paneli kapat\n");
+        put("ar", "notif_stop=إيقاف قسري\ndonate=☕ ادعم التطوير\nsec_overlay=نمط اللوحة\nstyle_full=كامل\nstyle_compact=مضغوط\nstyle_minimal=بسيط\nhide_overlay=إغلاق اللوحة\n");
     }
 }
