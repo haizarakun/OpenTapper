@@ -11,7 +11,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 100
-        versionName = "1.00"
+        versionName = "v1.00"
     }
 
     // If a keystore is provided through environment variables (e.g. in CI), the
